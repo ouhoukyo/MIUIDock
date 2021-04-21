@@ -1,16 +1,45 @@
 package cn.houkyo.miuidock
 
+import android.annotation.SuppressLint
 import android.content.Context;
+import java.io.File
 
 class Utils {
+    val DATAFILENAME = "MIUIDockConfig"
 
-    fun dip2px(context:Context,dpValue:Int): Int {
-        var scale = context.resources.displayMetrics.density
+    fun dip2px(context: Context, dpValue: Int): Int {
+        val scale = context.resources.displayMetrics.density
         return (dpValue * scale + 0.5f).toInt()
     }
 
-    fun px2dip(context:Context,pxValue:Int): Int {
-        var scale = context.resources.displayMetrics.density
+    fun px2dip(context: Context, pxValue: Int): Int {
+        val scale = context.resources.displayMetrics.density
         return (pxValue / scale + 0.5f).toInt()
+    }
+
+    @SuppressLint("SetWorldReadable")
+    fun saveData(context: Context, key: String, value: Int) {
+        try {
+            val sharedPreferences = context.getSharedPreferences(DATAFILENAME, Context.MODE_WORLD_READABLE)
+            val editor = sharedPreferences.edit()
+            editor.putInt(key, value)
+            editor.apply()
+        } catch (e: Exception) {
+            // 也许是模块尚未加载
+        }
+    }
+
+    fun getData(context: Context, key: String, defValue: Int): Int {
+        try {
+            val sharedPreferences = context.getSharedPreferences(DATAFILENAME, Context.MODE_WORLD_READABLE)
+            val result = sharedPreferences.getInt(key, defValue)
+            return result
+        } catch (e: Exception) {
+            // 也许是模块尚未加载
+            if(key == "TEST_MODULE"){
+                return 0
+            }
+        }
+        return defValue
     }
 }
