@@ -1,14 +1,16 @@
 <resources>
     <string name="app_name">MIUIDock</string>
     <string name="activity_title">Dock Setting</string>
-    <string name="dock_radius_property">Radius</string>
-    <string name="dock_height_property">Height</string>
-    <string name="dock_side_margin_property">Side margin</string>
-    <string name="dock_bottom_margin_property">Bottom margin</string>
+    <string name="dock_radius_property">Dock Radius</string>
+    <string name="dock_height_property">Dock Height</string>
+    <string name="dock_side_margin_property">Dock Side margin</string>
+    <string name="dock_bottom_margin_property">Dock Bottom margin</string>
+    <string name="dock_icon_bottom_margin_property">Icon Bottom margin</string>
     <string name="high_level_animation">High level animation</string>
     <string name="dock_save">Save</string>
     <string name="dock_save_tips">It will be applied after restarting the launcher</string>
     <string name="menu_to_setting_title">Stop Launcher</string>
+    <string name="restart_launcher_tips">Kill launcher process done</string>
     <string name="menu_about_title">About</string>
     <string name="dialog_about_message">I\'m Houkyo, I just want to make some apps better.</string>
     <string name="module_not_enable">Module not working</string>

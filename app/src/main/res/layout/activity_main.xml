@@ -28,43 +28,10 @@
                 android:text="@string/dock_radius_property"
                 android:textSize="18sp" />
 
-            <SeekBar
+            <cn.houkyo.miuidock.ui.CustomSeekBar
                 android:id="@+id/dockRadiusSeekBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingHorizontal="10dp">
-
-                <TextView
-                    android:id="@+id/dockRadiusMinTextView"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/dockRadiusValueTextView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="0"
-                    android:textAlignment="center"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/dockRadiusMaxTextView"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textAlignment="viewEnd"
-                    android:textSize="14sp" />
-            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -81,43 +48,10 @@
                 android:text="@string/dock_height_property"
                 android:textSize="18sp" />
 
-            <SeekBar
+            <cn.houkyo.miuidock.ui.CustomSeekBar
                 android:id="@+id/dockHeightSeekBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingHorizontal="10dp">
-
-                <TextView
-                    android:id="@+id/dockHeightMinTextView"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/dockHeightValueTextView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="0"
-                    android:textAlignment="center"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/dockHeightMaxTextView"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textAlignment="viewEnd"
-                    android:textSize="14sp" />
-            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -134,43 +68,10 @@
                 android:text="@string/dock_side_margin_property"
                 android:textSize="18sp" />
 
-            <SeekBar
+            <cn.houkyo.miuidock.ui.CustomSeekBar
                 android:id="@+id/dockSideSeekBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingHorizontal="10dp">
-
-                <TextView
-                    android:id="@+id/dockSideMinTextView"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/dockSideValueTextView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="0"
-                    android:textAlignment="center"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/dockSideMaxTextView"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textAlignment="viewEnd"
-                    android:textSize="14sp" />
-            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -187,43 +88,30 @@
                 android:text="@string/dock_bottom_margin_property"
                 android:textSize="18sp" />
 
-            <SeekBar
+            <cn.houkyo.miuidock.ui.CustomSeekBar
                 android:id="@+id/dockBottomSeekBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+        </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/dockIconBottomTextView"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingHorizontal="10dp">
+                android:layout_marginBottom="10dp"
+                android:text="@string/dock_icon_bottom_margin_property"
+                android:textSize="18sp" />
 
-                <TextView
-                    android:id="@+id/dockBottomMinTextView"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/dockBottomValueTextView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="0"
-                    android:textAlignment="center"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/dockBottomMaxTextView"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textAlignment="viewEnd"
-                    android:textSize="14sp" />
-            </LinearLayout>
+            <cn.houkyo.miuidock.ui.CustomSeekBar
+                android:id="@+id/dockIconBottomSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <LinearLayout

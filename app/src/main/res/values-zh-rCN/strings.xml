@@ -5,11 +5,13 @@
     <string name="dock_height_property">高度</string>
     <string name="dock_side_margin_property">距离屏幕两侧</string>
     <string name="dock_bottom_margin_property">距离屏幕底部</string>
+    <string name="dock_icon_bottom_margin_property">图标区域距离屏幕底部</string>
     <string name="high_level_animation">开启高级动画</string>
     <string name="dock_save">保存</string>
     <string name="dock_save_tips">重启桌面后生效</string>
     <string name="menu_to_setting_title">重启桌面</string>
+    <string name="restart_launcher_tips">已结束桌面进程</string>
     <string name="menu_about_title">关于</string>
-    <string name="dialog_about_message">我是Houkyo，只是想让一些App变得更好一些。</string>
+    <string name="dialog_about_message">我是Houkyo，只是想让某些App变得更好一些。</string>
     <string name="module_not_enable">模块未生效</string>
 </resources>

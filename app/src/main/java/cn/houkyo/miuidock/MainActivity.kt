@@ -10,6 +10,9 @@ import android.view.MenuItem
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import cn.houkyo.miuidock.ui.CustomSeekBar
+import java.io.DataOutputStream
+import java.lang.Exception
 
 
 @SuppressLint("UseSwitchCompatOrMaterialCode")
@@ -18,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     var height = DefaultValue().height
     var sideMargin = DefaultValue().sideMargin
     var bottomMargin = DefaultValue().bottomMargin
+    var iconBottomMargin = DefaultValue().iconBottomMargin
     var highLevel = DefaultValue().highLevel
     var isModuleEnable = false
 
@@ -54,118 +58,51 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun init() {
-        val RadiusSeekBar = findViewById<SeekBar>(R.id.dockRadiusSeekBar)
-        val RadiusMinTextView = findViewById<TextView>(R.id.dockRadiusMinTextView)
-        val RadiusMaxTextView = findViewById<TextView>(R.id.dockRadiusMaxTextView)
-        val RadiusValueTextView = findViewById<TextView>(R.id.dockRadiusValueTextView)
-
-        val HeightSeekBar = findViewById<SeekBar>(R.id.dockHeightSeekBar)
-        val HeightMinTextView = findViewById<TextView>(R.id.dockHeightMinTextView)
-        val HeightMaxTextView = findViewById<TextView>(R.id.dockHeightMaxTextView)
-        val HeightValueTextView = findViewById<TextView>(R.id.dockHeightValueTextView)
-
-        val SideSeekBar = findViewById<SeekBar>(R.id.dockSideSeekBar)
-        val SideMinTextView = findViewById<TextView>(R.id.dockSideMinTextView)
-        val SideMaxTextView = findViewById<TextView>(R.id.dockSideMaxTextView)
-        val SideValueTextView = findViewById<TextView>(R.id.dockSideValueTextView)
-
-        val BottomSeekBar = findViewById<SeekBar>(R.id.dockBottomSeekBar)
-        val BottomMinTextView = findViewById<TextView>(R.id.dockBottomMinTextView)
-        val BottomMaxTextView = findViewById<TextView>(R.id.dockBottomMaxTextView)
-        val BottomValueTextView = findViewById<TextView>(R.id.dockBottomValueTextView)
-
+        val RadiusSeekBar = findViewById<CustomSeekBar>(R.id.dockRadiusSeekBar)
+        val HeightSeekBar = findViewById<CustomSeekBar>(R.id.dockHeightSeekBar)
+        val SideSeekBar = findViewById<CustomSeekBar>(R.id.dockSideSeekBar)
+        val BottomSeekBar = findViewById<CustomSeekBar>(R.id.dockBottomSeekBar)
+        val IconBottomSeekBar = findViewById<CustomSeekBar>(R.id.dockIconBottomSeekBar)
         val HighLevelSwitch = findViewById<Switch>(R.id.highLevelSwitch)
-
         val SaveButton = findViewById<Button>(R.id.saveButton)
 
-        RadiusSeekBar.min = 0
-        RadiusMinTextView.text = RadiusSeekBar.min.toString()
-        RadiusSeekBar.max = height
-        RadiusMaxTextView.text = RadiusSeekBar.max.toString()
-        RadiusSeekBar.progress = radius
-        RadiusValueTextView.text = radius.toString()
-        RadiusSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                RadiusValueTextView.text = p1.toString()
-            }
+        RadiusSeekBar.setMinValue(0)
+        RadiusSeekBar.setMaxValue(height)
+        RadiusSeekBar.setValue(radius)
 
-            override fun onStartTrackingTouch(p0: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(p0: SeekBar?) {
-            }
-        })
-
-        HeightSeekBar.min = 30
-        HeightMinTextView.text = HeightSeekBar.min.toString()
-        HeightSeekBar.max = 120
-        HeightMaxTextView.text = HeightSeekBar.max.toString()
-        HeightSeekBar.progress = height
-        HeightValueTextView.text = height.toString()
-        HeightSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                HeightValueTextView.text = p1.toString()
-            }
-
-            override fun onStartTrackingTouch(p0: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(p0: SeekBar?) {
-                RadiusSeekBar.max = HeightSeekBar.progress
-                RadiusMaxTextView.text = RadiusSeekBar.max.toString()
-            }
-        })
+        HeightSeekBar.setMinValue(30)
+        HeightSeekBar.setMaxValue(120)
+        HeightSeekBar.setValue(height)
+        HeightSeekBar.setOnValueChangeListener { value -> RadiusSeekBar.setMaxValue(value) }
 
         val deviceWidth = Utils().px2dip(this, resources.displayMetrics.widthPixels)
-        SideSeekBar.min = 0
-        SideMinTextView.text = SideSeekBar.min.toString()
-        SideSeekBar.max = (deviceWidth / 2) + 10
-        SideMaxTextView.text = SideSeekBar.max.toString()
-        SideSeekBar.progress = sideMargin
-        SideValueTextView.text = sideMargin.toString()
-        SideSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                SideValueTextView.text = p1.toString()
-            }
+        SideSeekBar.setMinValue(0)
+        SideSeekBar.setMaxValue((deviceWidth / 2) + 10)
+        SideSeekBar.setValue(sideMargin)
 
-            override fun onStartTrackingTouch(p0: SeekBar?) {
-            }
+        BottomSeekBar.setMinValue(0)
+        BottomSeekBar.setMaxValue(200)
+        BottomSeekBar.setValue(bottomMargin)
 
-            override fun onStopTrackingTouch(p0: SeekBar?) {
-            }
-        })
-
-        BottomSeekBar.min = 0
-        BottomMinTextView.text = BottomSeekBar.min.toString()
-        BottomSeekBar.max = 200
-        BottomMaxTextView.text = BottomSeekBar.max.toString()
-        BottomSeekBar.progress = bottomMargin
-        BottomValueTextView.text = bottomMargin.toString()
-        BottomSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                BottomValueTextView.text = p1.toString()
-            }
-
-            override fun onStartTrackingTouch(p0: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(p0: SeekBar?) {
-            }
-        })
+        IconBottomSeekBar.setMinValue(0)
+        IconBottomSeekBar.setMaxValue(200)
+        IconBottomSeekBar.setValue(iconBottomMargin)
 
         HighLevelSwitch.isChecked = highLevel == 1
 
         SaveButton.setOnClickListener {
-            radius = RadiusSeekBar.progress
-            height = HeightSeekBar.progress
-            sideMargin = SideSeekBar.progress
-            bottomMargin = BottomSeekBar.progress
+            radius = RadiusSeekBar.getValue()
+            height = HeightSeekBar.getValue()
+            sideMargin = SideSeekBar.getValue()
+            bottomMargin = BottomSeekBar.getValue()
+            iconBottomMargin = IconBottomSeekBar.getValue()
             highLevel = if (HighLevelSwitch.isChecked) 1 else 0
             Utils().saveData(this, "DOCK_RADIUS", radius)
             Utils().saveData(this, "DOCK_RADIUS", radius)
             Utils().saveData(this, "DOCK_HEIGHT", height)
             Utils().saveData(this, "DOCK_SIDE", sideMargin)
             Utils().saveData(this, "DOCK_BOTTOM", bottomMargin)
+            Utils().saveData(this, "DOCK_ICON_BOTTOM", iconBottomMargin)
             Utils().saveData(this, "HIGH_LEVEL", highLevel)
             val toast = Toast(this)
             if (isModuleEnable) {
@@ -178,10 +115,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun goToSetting() {
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-        val uri = Uri.fromParts("package", "com.miui.home", null)
-        intent.data = uri
-        startActivity(intent)
+        try {
+            val suProcess = Runtime.getRuntime().exec("su")
+            val os = DataOutputStream(suProcess.outputStream)
+            os.writeBytes("am force-stop com.miui.home;exit;")
+            os.flush()
+            os.close()
+            val exitValue = suProcess.waitFor()
+            if (exitValue == 0) {
+                val toast = Toast(this)
+                toast.setText(R.string.restart_launcher_tips)
+                toast.show()
+            } else {
+                throw Exception()
+            }
+        } catch (e: Exception) {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+            val uri = Uri.fromParts("package", "com.miui.home", null)
+            intent.data = uri
+            startActivity(intent)
+        }
     }
 
     fun showAbout() {

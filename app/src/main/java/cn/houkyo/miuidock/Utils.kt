@@ -2,7 +2,6 @@ package cn.houkyo.miuidock
 
 import android.annotation.SuppressLint
 import android.content.Context;
-import java.io.File
 
 class Utils {
     val DATAFILENAME = "MIUIDockConfig"
