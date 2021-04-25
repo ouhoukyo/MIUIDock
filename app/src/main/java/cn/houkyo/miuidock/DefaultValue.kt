@@ -6,5 +6,6 @@ class DefaultValue {
     val sideMargin = 30
     val bottomMargin = 23
     val highLevel = 1
+    val hideIcon = 0
     val iconBottomMargin = 35
 }

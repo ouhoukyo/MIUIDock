@@ -1,7 +1,9 @@
 package cn.houkyo.miuidock
 
 import android.annotation.SuppressLint
+import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -23,7 +25,10 @@ class MainActivity : AppCompatActivity() {
     var bottomMargin = DefaultValue().bottomMargin
     var iconBottomMargin = DefaultValue().iconBottomMargin
     var highLevel = DefaultValue().highLevel
+    var hideIcon = DefaultValue().hideIcon
     var isModuleEnable = false
+
+    var HideIconMenu: MenuItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,18 +44,31 @@ class MainActivity : AppCompatActivity() {
         sideMargin = Utils().getData(this, "DOCK_SIDE", sideMargin)
         bottomMargin = Utils().getData(this, "DOCK_BOTTOM", bottomMargin)
         highLevel = Utils().getData(this, "HIGH_LEVEL", highLevel)
+        hideIcon = Utils().getData(this, "HIDE_ICON", hideIcon)
         init()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
+        HideIconMenu = menu.findItem(R.id.menu_hide_icon)
         return true
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        if (hideIcon == 0) {
+            HideIconMenu?.setTitle(R.string.hide_app_icon)
+        } else {
+            HideIconMenu?.setTitle(R.string.show_app_icon)
+        }
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val HideIcon = R.id.menu_hide_icon
         val GoToSetting = R.id.menu_to_setting
         val About = R.id.menu_about
         when (item.getItemId()) {
+            HideIcon -> handleHideIcon()
             GoToSetting -> goToSetting()
             About -> showAbout()
         }
@@ -112,6 +130,25 @@ class MainActivity : AppCompatActivity() {
             }
             toast.show()
         }
+    }
+
+    fun handleHideIcon() {
+        var switch: Int = PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+        if (hideIcon == 0) {
+            // 图标显示时操作 -> 隐藏图标
+            switch = PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+            hideIcon = 1
+            HideIconMenu?.setTitle(R.string.show_app_icon)
+        } else {
+            // 图标隐藏时操作 -> 显示图标
+            hideIcon = 0
+            HideIconMenu?.setTitle(R.string.hide_app_icon)
+        }
+        Utils().saveData(this, "HIDE_ICON", hideIcon)
+        this.getPackageManager().setComponentEnabledSetting(
+                ComponentName(this, this.javaClass.name + "Alias"),
+                switch, PackageManager.DONT_KILL_APP
+        )
     }
 
     fun goToSetting() {
