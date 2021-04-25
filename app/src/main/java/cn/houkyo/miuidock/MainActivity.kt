@@ -28,6 +28,8 @@ class MainActivity : AppCompatActivity() {
     var hideIcon = DefaultValue().hideIcon
     var isModuleEnable = false
 
+    var HideIconMenu: MenuItem? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -48,13 +50,25 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
+        HideIconMenu = menu.findItem(R.id.menu_hide_icon)
         return true
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        if (hideIcon == 0) {
+            HideIconMenu?.setTitle(R.string.hide_app_icon)
+        } else {
+            HideIconMenu?.setTitle(R.string.show_app_icon)
+        }
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val HideIcon = R.id.menu_hide_icon
         val GoToSetting = R.id.menu_to_setting
         val About = R.id.menu_about
         when (item.getItemId()) {
+            HideIcon -> handleHideIcon()
             GoToSetting -> goToSetting()
             About -> showAbout()
         }
@@ -69,16 +83,6 @@ class MainActivity : AppCompatActivity() {
         val IconBottomSeekBar = findViewById<CustomSeekBar>(R.id.dockIconBottomSeekBar)
         val HighLevelSwitch = findViewById<Switch>(R.id.highLevelSwitch)
         val SaveButton = findViewById<Button>(R.id.saveButton)
-        val hideIconSwitch = findViewById<Switch>(R.id.hide_icon_switch)
-
-        val hideIconTextView = findViewById<TextView>(R.id.hide_icon)
-        //隐藏/显示图标的开关监听器
-        //切换状态实时生效不需要点击保存按钮
-        hideIconSwitch.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
-            override fun onCheckedChanged(p0: CompoundButton?, p1: Boolean) {
-                hideIcon(hideIconTextView, p1)
-            }
-        })
 
         RadiusSeekBar.setMinValue(0)
         RadiusSeekBar.setMaxValue(height)
@@ -103,10 +107,6 @@ class MainActivity : AppCompatActivity() {
         IconBottomSeekBar.setValue(iconBottomMargin)
 
         HighLevelSwitch.isChecked = highLevel == 1
-        //初始化隐藏/显示图标的按钮以及文字
-        hideIconSwitch.isChecked = hideIcon == 1
-        hideIconTextView.setText(if (hideIconSwitch.isChecked) R.string.hide_icon else R.string.show_icon)
-
 
         SaveButton.setOnClickListener {
             radius = RadiusSeekBar.getValue()
@@ -132,31 +132,33 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun hideIcon(textView: TextView, hide: Boolean) {
-        //默认显示图标
+    fun handleHideIcon() {
         var switch: Int = PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-
-        // 隐藏图标
-        if (hide) {
-            hideIcon = 1
+        if (hideIcon == 0) {
+            // 图标显示时操作 -> 隐藏图标
             switch = PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-            textView.setText(R.string.hide_icon)
+            hideIcon = 1
+            HideIconMenu?.setTitle(R.string.show_app_icon)
         } else {
+            // 图标隐藏时操作 -> 显示图标
             hideIcon = 0
-            textView.setText(R.string.show_icon)
+            HideIconMenu?.setTitle(R.string.hide_app_icon)
         }
         Utils().saveData(this, "HIDE_ICON", hideIcon)
-
         this.getPackageManager().setComponentEnabledSetting(
-            ComponentName(this, this.javaClass.name + "Alias"),
-            switch, PackageManager.DONT_KILL_APP
+                ComponentName(this, this.javaClass.name + "Alias"),
+                switch, PackageManager.DONT_KILL_APP
         )
-
     }
 
     fun goToSetting() {
         try {
-            val exitValue: Int = Utils().killHomeProcess()
+            val suProcess = Runtime.getRuntime().exec("su")
+            val os = DataOutputStream(suProcess.outputStream)
+            os.writeBytes("am force-stop com.miui.home;exit;")
+            os.flush()
+            os.close()
+            val exitValue = suProcess.waitFor()
             if (exitValue == 0) {
                 val toast = Toast(this)
                 toast.setText(R.string.restart_launcher_tips)
@@ -178,10 +180,10 @@ class MainActivity : AppCompatActivity() {
         AlertDialogBuilder.setMessage(R.string.dialog_about_message)
         AlertDialogBuilder.setCancelable(true)
         AlertDialogBuilder.setPositiveButton(
-            "OK"
+                "OK"
         ) { dialog, id -> dialog.cancel() }
         AlertDialogBuilder.setNegativeButton(
-            "Github"
+                "Github"
         ) { dialog, id ->
             val github = "https://www.github.com/ouhoukyo/MIUIDock"
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(github)))

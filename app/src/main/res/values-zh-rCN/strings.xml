@@ -1,14 +1,14 @@
 <resources>
     <string name="app_name">MIUIDock</string>
     <string name="activity_title">Dock设置</string>
-    <string name="dock_radius_property">圆角</string>
-    <string name="dock_height_property">高度</string>
-    <string name="dock_side_margin_property">距离屏幕两侧</string>
-    <string name="dock_bottom_margin_property">距离屏幕底部</string>
+    <string name="dock_radius_property">Dock圆角</string>
+    <string name="dock_height_property">Dock高度</string>
+    <string name="dock_side_margin_property">Dock距离屏幕两侧</string>
+    <string name="dock_bottom_margin_property">Dock距离屏幕底部</string>
     <string name="dock_icon_bottom_margin_property">图标区域距离屏幕底部</string>
     <string name="high_level_animation">开启高级动画</string>
-    <string name="hide_icon">隐藏桌面图标</string>
-    <string name="show_icon">显示桌面图标</string>
+    <string name="hide_app_icon">隐藏图标</string>
+    <string name="show_app_icon">显示图标</string>
     <string name="dock_save">保存</string>
     <string name="dock_save_tips">重启桌面后生效</string>
     <string name="menu_to_setting_title">重启桌面</string>
