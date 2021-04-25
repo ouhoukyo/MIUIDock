@@ -1,7 +1,9 @@
 package cn.houkyo.miuidock
 
 import android.annotation.SuppressLint
+import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -23,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     var bottomMargin = DefaultValue().bottomMargin
     var iconBottomMargin = DefaultValue().iconBottomMargin
     var highLevel = DefaultValue().highLevel
+    var hideIcon = DefaultValue().hideIcon
     var isModuleEnable = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         sideMargin = Utils().getData(this, "DOCK_SIDE", sideMargin)
         bottomMargin = Utils().getData(this, "DOCK_BOTTOM", bottomMargin)
         highLevel = Utils().getData(this, "HIGH_LEVEL", highLevel)
+        hideIcon = Utils().getData(this, "HIDE_ICON", hideIcon)
         init()
     }
 
@@ -65,6 +69,16 @@ class MainActivity : AppCompatActivity() {
         val IconBottomSeekBar = findViewById<CustomSeekBar>(R.id.dockIconBottomSeekBar)
         val HighLevelSwitch = findViewById<Switch>(R.id.highLevelSwitch)
         val SaveButton = findViewById<Button>(R.id.saveButton)
+        val hideIconSwitch = findViewById<Switch>(R.id.hide_icon_switch)
+
+        val hideIconTextView = findViewById<TextView>(R.id.hide_icon)
+        //隐藏/显示图标的开关监听器
+        //切换状态实时生效不需要点击保存按钮
+        hideIconSwitch.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
+            override fun onCheckedChanged(p0: CompoundButton?, p1: Boolean) {
+                hideIcon(hideIconTextView, p1)
+            }
+        })
 
         RadiusSeekBar.setMinValue(0)
         RadiusSeekBar.setMaxValue(height)
@@ -89,6 +103,10 @@ class MainActivity : AppCompatActivity() {
         IconBottomSeekBar.setValue(iconBottomMargin)
 
         HighLevelSwitch.isChecked = highLevel == 1
+        //初始化隐藏/显示图标的按钮以及文字
+        hideIconSwitch.isChecked = hideIcon == 1
+        hideIconTextView.setText(if (hideIconSwitch.isChecked) R.string.hide_icon else R.string.show_icon)
+
 
         SaveButton.setOnClickListener {
             radius = RadiusSeekBar.getValue()
@@ -114,14 +132,31 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun hideIcon(textView: TextView, hide: Boolean) {
+        //默认显示图标
+        var switch: Int = PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+
+        // 隐藏图标
+        if (hide) {
+            hideIcon = 1
+            switch = PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+            textView.setText(R.string.hide_icon)
+        } else {
+            hideIcon = 0
+            textView.setText(R.string.show_icon)
+        }
+        Utils().saveData(this, "HIDE_ICON", hideIcon)
+
+        this.getPackageManager().setComponentEnabledSetting(
+            ComponentName(this, this.javaClass.name + "Alias"),
+            switch, PackageManager.DONT_KILL_APP
+        )
+
+    }
+
     fun goToSetting() {
         try {
-            val suProcess = Runtime.getRuntime().exec("su")
-            val os = DataOutputStream(suProcess.outputStream)
-            os.writeBytes("am force-stop com.miui.home;exit;")
-            os.flush()
-            os.close()
-            val exitValue = suProcess.waitFor()
+            val exitValue: Int = Utils().killHomeProcess()
             if (exitValue == 0) {
                 val toast = Toast(this)
                 toast.setText(R.string.restart_launcher_tips)
@@ -143,10 +178,10 @@ class MainActivity : AppCompatActivity() {
         AlertDialogBuilder.setMessage(R.string.dialog_about_message)
         AlertDialogBuilder.setCancelable(true)
         AlertDialogBuilder.setPositiveButton(
-                "OK"
+            "OK"
         ) { dialog, id -> dialog.cancel() }
         AlertDialogBuilder.setNegativeButton(
-                "Github"
+            "Github"
         ) { dialog, id ->
             val github = "https://www.github.com/ouhoukyo/MIUIDock"
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(github)))
