@@ -7,6 +7,8 @@
     <string name="dock_bottom_margin_property">Dock Bottom margin</string>
     <string name="dock_icon_bottom_margin_property">Icon Bottom margin</string>
     <string name="high_level_animation">High level animation</string>
+    <string name="hide_icon">Hide Desktop Icon</string>
+    <string name="show_icon">Show Desktop Icon</string>
     <string name="dock_save">Save</string>
     <string name="dock_save_tips">It will be applied after restarting the launcher</string>
     <string name="menu_to_setting_title">Stop Launcher</string>

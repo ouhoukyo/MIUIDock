@@ -7,6 +7,8 @@
     <string name="dock_bottom_margin_property">距离屏幕底部</string>
     <string name="dock_icon_bottom_margin_property">图标区域距离屏幕底部</string>
     <string name="high_level_animation">开启高级动画</string>
+    <string name="hide_icon">隐藏桌面图标</string>
+    <string name="show_icon">显示桌面图标</string>
     <string name="dock_save">保存</string>
     <string name="dock_save_tips">重启桌面后生效</string>
     <string name="menu_to_setting_title">重启桌面</string>
