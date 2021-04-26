@@ -26,15 +26,16 @@ class MainActivity : AppCompatActivity() {
     var iconBottomMargin = DefaultValue().iconBottomMargin
     var highLevel = DefaultValue().highLevel
     var hideIcon = DefaultValue().hideIcon
-    var isModuleEnable = false
+    private fun isModuleEnable(): Boolean {
+        return false
+    }
 
     var HideIconMenu: MenuItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        isModuleEnable = Utils().getData(this, "TEST_MODULE", 1) == 1
-        if (!isModuleEnable) {
+        if (!isModuleEnable()) {
             val toast = Toast(this)
             toast.setText(R.string.module_not_enable)
             toast.show()
@@ -123,7 +124,7 @@ class MainActivity : AppCompatActivity() {
             Utils().saveData(this, "DOCK_ICON_BOTTOM", iconBottomMargin)
             Utils().saveData(this, "HIGH_LEVEL", highLevel)
             val toast = Toast(this)
-            if (isModuleEnable) {
+            if (isModuleEnable()) {
                 toast.setText(R.string.dock_save_tips)
             } else {
                 toast.setText(R.string.module_not_enable)

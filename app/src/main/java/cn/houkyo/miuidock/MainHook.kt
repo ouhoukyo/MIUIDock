@@ -49,13 +49,27 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
     }
 
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
-        if (lpparam.packageName != MIUI_HOME_LAUNCHER_PACKAGENAME) {
-            return
-        }
-        launcherHook(lpparam)
-        deviceConfigHook(lpparam)
-        if (getData("HIGH_LEVEL", HIGH_LEVEL) == 1) {
-            deviceLevelHook(lpparam)
+        when (lpparam.packageName) {
+            SELF_PACKAGENAME -> {
+                XposedHelpers.findAndHookMethod("${SELF_PACKAGENAME}.MainActivity",
+                    lpparam.classLoader, "isModuleEnable", object : XC_MethodHook() {
+                        override fun afterHookedMethod(param: MethodHookParam) {
+                            param.result = true
+                            XposedBridge.log("[MIUIDock] is enable")
+                        }
+                    })
+            }
+            MIUI_HOME_LAUNCHER_PACKAGENAME -> {
+                launcherHook(lpparam)
+                deviceConfigHook(lpparam)
+                if (getData("HIGH_LEVEL", HIGH_LEVEL) == 1) {
+                    deviceLevelHook(lpparam)
+                }
+            }
+
+            else -> {
+                return
+            }
         }
     }
 
