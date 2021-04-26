@@ -25,6 +25,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
                 "$MIUI_HOME_LAUNCHER_PACKAGENAME.launcher.common.DeviceLevelUtils"
         const val CPULEVEL_UTILS_CLASSNAME =
                 "$MIUI_HOME_LAUNCHER_PACKAGENAME.launcher.common.CpuLevelUtils"
+        const val UTILITIES_CLASSNAME = "$MIUI_HOME_LAUNCHER_PACKAGENAME.launcher.common.Utilities"
 
         // 单位dip
         val DOCK_RADIUS = DefaultValue().radius
@@ -52,12 +53,11 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
         when (lpparam.packageName) {
             SELF_PACKAGENAME -> {
                 XposedHelpers.findAndHookMethod("${SELF_PACKAGENAME}.MainActivity",
-                    lpparam.classLoader, "isModuleEnable", object : XC_MethodHook() {
-                        override fun afterHookedMethod(param: MethodHookParam) {
-                            param.result = true
-                            XposedBridge.log("[MIUIDock] is enable")
-                        }
-                    })
+                        lpparam.classLoader, "isModuleEnable", object : XC_MethodHook() {
+                    override fun afterHookedMethod(param: MethodHookParam) {
+                        param.result = true
+                    }
+                })
             }
             MIUI_HOME_LAUNCHER_PACKAGENAME -> {
                 launcherHook(lpparam)
@@ -148,7 +148,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
                             SearchBarDrawer.layoutParams = layoutParams
                         }
                     })
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             XposedBridge.log("[MIUIDock] LauncherHook Error:" + e.message)
         }
     }
@@ -219,7 +219,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
                                     Utils().dip2px(_context, getData("DOCK_BOTTOM", DOCK_BOTTOM))
                         }
                     })
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             XposedBridge.log("[MIUIDock] DeviceConfigHook Error:" + e.message)
         }
     }
@@ -237,49 +237,26 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
                 CPULEVEL_UTILS_CLASSNAME,
                 lpparam.classLoader
         ) ?: return
-        try {
-            // 修改高斯模糊和动画等级
-            XposedHelpers.findAndHookMethod(
-                    _BLUR_UTILS_CLASS, "getBlurType", XC_MethodReplacement.returnConstant(
-                    2
-            )
-            )
-            // 打开文件夹时是否模糊
-            // XposedHelpers.findAndHookMethod(_BLUR_UTILS_CLASS, "isUserBlurWhenOpenFolder", XC_MethodReplacement.returnConstant(true))
-            // 修改设备等级 2为最高级
-            XposedHelpers.findAndHookMethod(
-                    _DEVICELEVEL_UTILS_CLASS, "getDeviceLevel", XC_MethodReplacement.returnConstant(
-                    2
-            )
-            )
-            // XposedHelpers.findAndHookMethod(_DEVICELEVEL_UTILS_CLASS, "getDeviceLevel", Int::class.java, XC_MethodReplacement.returnConstant(2))
-            // XposedHelpers.findAndHookMethod(_DEVICELEVEL_UTILS_CLASS, "getDeviceLevel", Int::class.java, Int::class.java, XC_MethodReplacement.returnConstant(2))
-            // XposedHelpers.findAndHookMethod(_DEVICELEVEL_UTILS_CLASS, "getDeviceLevel1", Int::class.java, XC_MethodReplacement.returnConstant(2))
-            // 是否使用的简单动画
-            XposedHelpers.findAndHookMethod(
-                    _DEVICELEVEL_UTILS_CLASS, "isUseSimpleAnim", XC_MethodReplacement.returnConstant(
-                    false
-            )
-            )
-            // 下载应用动画
-            XposedHelpers.findAndHookMethod(
-                    _CPULEVEL_UTILS_CLASS, "needMamlDownload", XC_MethodReplacement.returnConstant(
-                    true
-            )
-            )
-            // 骁龙CPU等级
-            XposedHelpers.findAndHookMethod(
-                    _CPULEVEL_UTILS_CLASS,
-                    "getQualcommCpuLevel",
-                    String::class.java,
-                    XC_MethodReplacement.returnConstant(
-                            2
-                    )
-            )
-            // XposedHelpers.findAndHookMethod(_DEVICELEVEL_UTILS_CLASS, "getQualcommCpuLevel", String::class.java, XC_MethodReplacement.returnConstant(2))
-        } catch (e: Exception) {
-            XposedBridge.log("[MIUIDock] DeviceLevelHook Error:" + e.message)
-        }
+        val _UTILITIES_CLASS = XposedHelpers.findClassIfExists(
+                UTILITIES_CLASSNAME,
+                lpparam.classLoader
+        ) ?: return
+        // 高斯模糊类型
+        replaceMethodResult(_BLUR_UTILS_CLASS, "getBlurType", 2)
+        // 打开文件夹是否开启模糊
+        replaceMethodResult(_BLUR_UTILS_CLASS, "isUserBlurWhenOpenFolder", true)
+        // 设备等级
+        replaceMethodResult(_DEVICELEVEL_UTILS_CLASS, "getDeviceLevel", 2)
+        replaceMethodResult(_DEVICELEVEL_UTILS_CLASS, "getDeviceLevel", 2, Int::class.java)
+        replaceMethodResult(_DEVICELEVEL_UTILS_CLASS, "getDeviceLevel", 2, Int::class.java, Int::class.java)
+        replaceMethodResult(_DEVICELEVEL_UTILS_CLASS, "getDeviceLevel1", 2, Int::class.java)
+        replaceMethodResult(_DEVICELEVEL_UTILS_CLASS, "isUseSimpleAnim", false)
+        replaceMethodResult(_DEVICELEVEL_UTILS_CLASS, "getQualcommCpuLevel", 2, String::class.java)
+        replaceMethodResult(_CPULEVEL_UTILS_CLASS, "getQualcommCpuLevel", 2, String::class.java)
+        // 下载特效
+        replaceMethodResult(_CPULEVEL_UTILS_CLASS, "needMamlDownload", true)
+        // 平滑动画
+        replaceMethodResult(_UTILITIES_CLASS, "isUseSmoothAnimationEffect", true)
     }
 
     private fun resetDockRadius(res: XResources, context: Context, drawableName: String) {
@@ -305,8 +282,16 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
                             return background
                         }
                     })
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             XposedBridge.log("[MIUIDock] ResourcesReplacement Error:" + e.message)
+        }
+    }
+
+    private fun replaceMethodResult(clazz: Class<*>, methodName: String, result: Any, vararg args: Any?) {
+        try {
+            XposedHelpers.findAndHookMethod(clazz, methodName, *args, XC_MethodReplacement.returnConstant(result))
+        } catch (e: Throwable) {
+            XposedBridge.log("[MIUIDock] Replace Method Result Error:" + e.message)
         }
     }
 
@@ -315,7 +300,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
             val pref = XSharedPreferences(SELF_PACKAGENAME, Utils().DATAFILENAME)
             val value = pref.getInt(key, defValue)
             return value
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             XposedBridge.log("[MIUIDock] Can not get data:" + key)
         }
         return defValue

@@ -14,23 +14,17 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import cn.houkyo.miuidock.ui.CustomSeekBar
 import java.io.DataOutputStream
-import java.lang.Exception
-
 
 @SuppressLint("UseSwitchCompatOrMaterialCode")
 class MainActivity : AppCompatActivity() {
-    var radius = DefaultValue().radius
-    var height = DefaultValue().height
-    var sideMargin = DefaultValue().sideMargin
-    var bottomMargin = DefaultValue().bottomMargin
-    var iconBottomMargin = DefaultValue().iconBottomMargin
-    var highLevel = DefaultValue().highLevel
-    var hideIcon = DefaultValue().hideIcon
-    private fun isModuleEnable(): Boolean {
-        return false
-    }
-
-    var HideIconMenu: MenuItem? = null
+    private var radius = DefaultValue().radius
+    private var height = DefaultValue().height
+    private var sideMargin = DefaultValue().sideMargin
+    private var bottomMargin = DefaultValue().bottomMargin
+    private var iconBottomMargin = DefaultValue().iconBottomMargin
+    private var highLevel = DefaultValue().highLevel
+    private var hideIcon = DefaultValue().hideIcon
+    private var HideIconMenu: MenuItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,7 +70,7 @@ class MainActivity : AppCompatActivity() {
         return true;
     }
 
-    fun init() {
+    private fun init() {
         val RadiusSeekBar = findViewById<CustomSeekBar>(R.id.dockRadiusSeekBar)
         val HeightSeekBar = findViewById<CustomSeekBar>(R.id.dockHeightSeekBar)
         val SideSeekBar = findViewById<CustomSeekBar>(R.id.dockSideSeekBar)
@@ -133,7 +127,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun handleHideIcon() {
+    private fun handleHideIcon() {
         var switch: Int = PackageManager.COMPONENT_ENABLED_STATE_ENABLED
         if (hideIcon == 0) {
             // 图标显示时操作 -> 隐藏图标
@@ -152,7 +146,7 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    fun goToSetting() {
+    private fun goToSetting() {
         try {
             val suProcess = Runtime.getRuntime().exec("su")
             val os = DataOutputStream(suProcess.outputStream)
@@ -175,7 +169,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun showAbout() {
+    private fun showAbout() {
         val AlertDialogBuilder = AlertDialog.Builder(this)
         AlertDialogBuilder.setTitle(R.string.menu_about_title)
         AlertDialogBuilder.setMessage(R.string.dialog_about_message)
@@ -191,5 +185,9 @@ class MainActivity : AppCompatActivity() {
         }
         val dialog = AlertDialogBuilder.create()
         dialog.show()
+    }
+
+    private fun isModuleEnable(): Boolean {
+        return false
     }
 }

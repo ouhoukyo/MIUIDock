@@ -23,7 +23,7 @@ class Utils {
             val editor = sharedPreferences.edit()
             editor.putInt(key, value)
             editor.apply()
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             // 也许是模块尚未加载
         }
     }
@@ -33,11 +33,8 @@ class Utils {
             val sharedPreferences = context.getSharedPreferences(DATAFILENAME, Context.MODE_WORLD_READABLE)
             val result = sharedPreferences.getInt(key, defValue)
             return result
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             // 也许是模块尚未加载
-            if(key == "TEST_MODULE"){
-                return 0
-            }
         }
         return defValue
     }
