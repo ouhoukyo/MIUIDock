@@ -6,27 +6,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:screenOrientation="portrait"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Miuidock">
-        <!-- 隐藏图标Xposed启动 -->
-        <activity android:name="cn.houkyo.miuidock.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="de.robv.android.xposed.category.MODULE_SETTINGS" />
-            </intent-filter>
-        </activity>
-        <!--显示图标桌面启动-->
-        <activity-alias
-            android:name="cn.houkyo.miuidock.MainActivityAlias"
-            android:enabled="true"
-            android:label="@string/app_name"
-            android:targetActivity="cn.houkyo.miuidock.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
+        android:allowBackup="false">
 
         <meta-data
             android:name="xposedmodule"
@@ -40,8 +21,8 @@
             android:name="xposedminversion"
             android:value="93" />
         <meta-data
-            android:name="xposedsharedprefs"
-            android:value="true" />
+            android:name="xposedscope"
+            android:resource="@array/module_scope" />
     </application>
 
 </manifest>
