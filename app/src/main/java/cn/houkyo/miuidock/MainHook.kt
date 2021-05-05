@@ -11,7 +11,6 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
-import androidx.core.content.ContextCompat
 import cn.houkyo.miuidock.ui.SeekBarView
 import com.github.kyuubiran.ezxhelper.init.EzXHelperInit
 import com.github.kyuubiran.ezxhelper.utils.*
@@ -306,13 +305,20 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
                 drawableName,
                 object : XResources.DrawableLoader() {
                     override fun newDrawable(xres: XResources, id: Int): Drawable {
-                        val background = ContextCompat.getDrawable(
-                            context, xres.getIdentifier(
+                        val background=context.getDrawable(
+                            xres.getIdentifier(
                                 drawableName,
                                 "drawable",
                                 MIUI_HOME_LAUNCHER_PACKAGENAME
                             )
                         ) as RippleDrawable
+//                        val background = ContextCompat.getDrawable(
+//                            context, xres.getIdentifier(
+//                                drawableName,
+//                                "drawable",
+//                                MIUI_HOME_LAUNCHER_PACKAGENAME
+//                            )
+//                        ) as RippleDrawable
                         val backgroundShape = background.getDrawable(0) as GradientDrawable
                         backgroundShape.cornerRadius =
                             Utils.dip2px(context, Utils.getData("DOCK_RADIUS", DOCK_RADIUS))
