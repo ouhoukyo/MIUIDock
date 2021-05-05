@@ -26,11 +26,6 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
         const val MIUI_HOME_LAUNCHER_PACKAGENAME = "com.miui.home"
         const val DEVICE_CONFIG_CLASSNAME = "$MIUI_HOME_LAUNCHER_PACKAGENAME.launcher.DeviceConfig"
         const val LAUNCHER_CLASSNAME = "$MIUI_HOME_LAUNCHER_PACKAGENAME.launcher.Launcher"
-        const val BLUR_UTILS_CLASSNAME = "$MIUI_HOME_LAUNCHER_PACKAGENAME.launcher.common.BlurUtils"
-        const val DEVICELEVEL_UTILS_CLASSNAME =
-            "$MIUI_HOME_LAUNCHER_PACKAGENAME.launcher.common.DeviceLevelUtils"
-        const val CPULEVEL_UTILS_CLASSNAME =
-            "$MIUI_HOME_LAUNCHER_PACKAGENAME.launcher.common.CpuLevelUtils"
 
         // 单位dip
         val DOCK_RADIUS = DefaultValue().radius
@@ -95,6 +90,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
                         "图标区域距离屏幕底部",
                         Utils.getData("DOCK_ICON_BOTTOM", 35)
                     ).build()
+                var confirmDelete = false
                 invokeMethod("setTitle", arrayOf("MIUIDock 设置"), arrayOf(CharSequence::class.java))
                 invokeMethod(
                     "setNegativeButton",
@@ -104,6 +100,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
                             arrayOf(context, false),
                             arrayOf(Context::class.java, Boolean::class.java)
                         )
+                        confirmDelete = true
                     }),
                     arrayOf(CharSequence::class.java, DialogInterface.OnClickListener::class.java)
                 )
@@ -122,6 +119,14 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
                         }
                     }),
                     arrayOf(CharSequence::class.java, DialogInterface.OnClickListener::class.java)
+                )
+                invokeMethod(
+                    "setOnDismissListener",
+                    arrayOf(DialogInterface.OnDismissListener { _ ->
+                        if (!confirmDelete) it.thisObject.getObjectOrNull("mSearchBarSetting")!!
+                            .invokeMethod("setChecked", arrayOf(true), arrayOf(Boolean::class.java))
+                    }),
+                    arrayOf(DialogInterface.OnDismissListener::class.java)
                 )
                 val linearLayout = LinearLayout(context).apply {
                     orientation = LinearLayout.VERTICAL
