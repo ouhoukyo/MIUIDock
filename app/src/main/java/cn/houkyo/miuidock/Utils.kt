@@ -1,9 +1,12 @@
 package cn.houkyo.miuidock
 
-import android.annotation.SuppressLint
-import android.content.Context;
+import android.content.Context
+import android.content.SharedPreferences
+import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
+import com.github.kyuubiran.ezxhelper.utils.Log
+import java.lang.Exception
 
-class Utils {
+object Utils {
     val DATAFILENAME = "MIUIDockConfig"
 
     fun dip2px(context: Context, dpValue: Int): Int {
@@ -16,26 +19,41 @@ class Utils {
         return (pxValue / scale + 0.5f).toInt()
     }
 
-    @SuppressLint("SetWorldReadable")
-    fun saveData(context: Context, key: String, value: Int) {
-        try {
-            val sharedPreferences = context.getSharedPreferences(DATAFILENAME, Context.MODE_WORLD_READABLE)
-            val editor = sharedPreferences.edit()
-            editor.putInt(key, value)
-            editor.apply()
-        } catch (e: Throwable) {
-            // 也许是模块尚未加载
+    fun getEditor(): SharedPreferences.Editor? {
+        return try {
+            appContext.getSharedPreferences(DATAFILENAME, Context.MODE_PRIVATE).edit()
+        } catch (e: Exception) {
+            null
         }
     }
 
-    fun getData(context: Context, key: String, defValue: Int): Int {
+    fun saveData(key: String, value: Any) {
         try {
-            val sharedPreferences = context.getSharedPreferences(DATAFILENAME, Context.MODE_WORLD_READABLE)
-            val result = sharedPreferences.getInt(key, defValue)
-            return result
+            val sharedPreferences =
+                appContext.getSharedPreferences(DATAFILENAME, Context.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            when (value) {
+                is Int -> editor.putInt(key, value)
+                is Float -> editor.putFloat(key, value)
+                is String -> editor.putString(key, value)
+                is Boolean -> editor.putBoolean(key, value)
+                is Long -> editor.putLong(key, value)
+            }
+            editor.apply()
+        } catch (e: Exception) {
+            // 也许是模块尚未加载
+            Log.e(e, "saveData")
+        }
+    }
+
+    fun getData(key: String, defValue: Int): Int {
+        try {
+            val sharedPreferences =
+                appContext.getSharedPreferences(DATAFILENAME, Context.MODE_PRIVATE)
+            return sharedPreferences.getInt(key, defValue)
         } catch (e: Throwable) {
             // 也许是模块尚未加载
+            return defValue
         }
-        return defValue
     }
 }
