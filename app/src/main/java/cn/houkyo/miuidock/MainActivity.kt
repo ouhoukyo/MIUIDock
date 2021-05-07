@@ -9,7 +9,9 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.*
+import android.widget.Toast
+import android.widget.Switch
+import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import cn.houkyo.miuidock.ui.CustomSeekBar
@@ -38,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         height = Utils().getData(this, "DOCK_HEIGHT", height)
         sideMargin = Utils().getData(this, "DOCK_SIDE", sideMargin)
         bottomMargin = Utils().getData(this, "DOCK_BOTTOM", bottomMargin)
+        iconBottomMargin = Utils().getData(this, "DOCK_ICON_BOTTOM", iconBottomMargin)
         highLevel = Utils().getData(this, "HIGH_LEVEL", highLevel)
         hideIcon = Utils().getData(this, "HIDE_ICON", hideIcon)
         init()
@@ -141,8 +144,8 @@ class MainActivity : AppCompatActivity() {
         }
         Utils().saveData(this, "HIDE_ICON", hideIcon)
         this.getPackageManager().setComponentEnabledSetting(
-                ComponentName(this, this.javaClass.name + "Alias"),
-                switch, PackageManager.DONT_KILL_APP
+            ComponentName(this, this.javaClass.name + "Alias"),
+            switch, PackageManager.DONT_KILL_APP
         )
     }
 
@@ -175,10 +178,10 @@ class MainActivity : AppCompatActivity() {
         AlertDialogBuilder.setMessage(R.string.dialog_about_message)
         AlertDialogBuilder.setCancelable(true)
         AlertDialogBuilder.setPositiveButton(
-                "OK"
+            "OK"
         ) { dialog, id -> dialog.cancel() }
         AlertDialogBuilder.setNegativeButton(
-                "Github"
+            "Github"
         ) { dialog, id ->
             val github = "https://www.github.com/ouhoukyo/MIUIDock"
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(github)))

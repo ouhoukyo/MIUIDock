@@ -32,8 +32,8 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
         val DOCK_HEIGHT = DefaultValue().height
         val DOCK_SIDE = DefaultValue().sideMargin
         val DOCK_BOTTOM = DefaultValue().bottomMargin
-        val HIGH_LEVEL = DefaultValue().highLevel
         val DOCK_ICON_BOTTOM = DefaultValue().iconBottomMargin
+        val HIGH_LEVEL = DefaultValue().highLevel
 
         // 需要修改圆角的资源
         val drawableNameList = arrayOf(
