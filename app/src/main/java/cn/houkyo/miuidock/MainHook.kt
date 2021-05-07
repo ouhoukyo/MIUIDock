@@ -65,6 +65,15 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
 
     private fun showSettingDialog() {
         findMethodByCondition("$MIUI_HOME_LAUNCHER_PACKAGENAME.settings.MiuiHomeSettings") { m ->
+            m.name == "onCreatePreferences" && m.parameterTypes[0] == Bundle::class.java && m.parameterTypes[1] == String::class.java
+        }.hookAfter {
+            it.thisObject.getObjectOrNull("mSearchBarSetting")!!.invokeMethod(
+                "setTitle",
+                arrayOf("Dock设置"),
+                arrayOf(CharSequence::class.java)
+            )
+        }
+        findMethodByCondition("$MIUI_HOME_LAUNCHER_PACKAGENAME.settings.MiuiHomeSettings") { m ->
             m.name == "showHomeSearchBarDialog" && m.parameters.isEmpty()
         }.hookBefore {
             Log.d("hook start")
@@ -90,7 +99,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
                         Utils.getData("DOCK_ICON_BOTTOM", 35)
                     ).build()
                 var confirmDelete = false
-                invokeMethod("setTitle", arrayOf("MIUIDock 设置"), arrayOf(CharSequence::class.java))
+                invokeMethod("setTitle", arrayOf("Dock设置"), arrayOf(CharSequence::class.java))
                 invokeMethod(
                     "setNegativeButton",
                     arrayOf("删除", DialogInterface.OnClickListener { _, _ ->
