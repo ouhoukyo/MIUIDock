@@ -52,12 +52,12 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
             return
         }
         EzXHelperInit.initHandleLoadPackage(lpparam)
+        EzXHelperInit.setLogTag("MIUIDock")
         findMethodByCondition("$MIUI_HOME_LAUNCHER_PACKAGENAME.launcher.Application") { m ->
             m.name == "attachBaseContext" && m.parameterTypes[0] == Context::class.java
         }.hookAfter {
             EzXHelperInit.initAppContext(it.args[0] as Context)
             showSettingDialog()
-            EzXHelperInit.setLogTag("MIUIDock")
             launcherHook(lpparam)
             deviceConfigHook(lpparam)
         }
@@ -146,7 +146,6 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
         if (resparam.packageName != MIUI_HOME_LAUNCHER_PACKAGENAME) {
             return
         }
-
         resparam.res.hookLayout(
             MIUI_HOME_LAUNCHER_PACKAGENAME,
             "layout",
@@ -305,7 +304,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
                 drawableName,
                 object : XResources.DrawableLoader() {
                     override fun newDrawable(xres: XResources, id: Int): Drawable {
-                        val background=context.getDrawable(
+                        val background = context.getDrawable(
                             xres.getIdentifier(
                                 drawableName,
                                 "drawable",
