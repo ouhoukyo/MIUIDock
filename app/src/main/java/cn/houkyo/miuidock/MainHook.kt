@@ -205,7 +205,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
                                     )
                         }
                     })
-            // Dock底部边距
+            // 底部边距
             XposedHelpers.findAndHookMethod(
                     _DEVICE_CONFIG_CLASS,
                     "calcSearchBarMarginBottom",
@@ -219,6 +219,12 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
                                     Utils().dip2px(_context, getData("DOCK_BOTTOM", DOCK_BOTTOM))
                         }
                     })
+            // 宽度变化量
+            XposedHelpers.findAndHookMethod(
+                _DEVICE_CONFIG_CLASS,
+                "getSearchBarWidthDelta",
+                XC_MethodReplacement.returnConstant(0)
+            )
         } catch (e: Throwable) {
             XposedBridge.log("[MIUIDock] DeviceConfigHook Error:" + e.message)
         }

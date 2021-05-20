@@ -97,11 +97,11 @@ class MainActivity : AppCompatActivity() {
         SideSeekBar.setValue(sideMargin)
 
         BottomSeekBar.setMinValue(0)
-        BottomSeekBar.setMaxValue(200)
+        BottomSeekBar.setMaxValue(100)
         BottomSeekBar.setValue(bottomMargin)
 
         IconBottomSeekBar.setMinValue(0)
-        IconBottomSeekBar.setMaxValue(200)
+        IconBottomSeekBar.setMaxValue(100)
         IconBottomSeekBar.setValue(iconBottomMargin)
 
         HighLevelSwitch.isChecked = highLevel == 1
