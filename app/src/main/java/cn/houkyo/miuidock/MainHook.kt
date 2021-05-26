@@ -284,6 +284,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
                             backgroundShape.cornerRadius =
                                     Utils().dip2px(context, getData("DOCK_RADIUS", DOCK_RADIUS))
                                             .toFloat()
+                            backgroundShape.setStroke(0, 0)
                             background.setDrawable(0, backgroundShape)
                             return background
                         }
