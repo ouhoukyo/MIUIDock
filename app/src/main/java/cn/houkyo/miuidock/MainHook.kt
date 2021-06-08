@@ -26,6 +26,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
         const val CPULEVEL_UTILS_CLASSNAME =
                 "$MIUI_HOME_LAUNCHER_PACKAGENAME.launcher.common.CpuLevelUtils"
         const val UTILITIES_CLASSNAME = "$MIUI_HOME_LAUNCHER_PACKAGENAME.launcher.common.Utilities"
+        const val SEARCH_BAR_STYLE_DATA_CLASSNAME = "$MIUI_HOME_LAUNCHER_PACKAGENAME.launcher.SearchBarStyleData"
 
         // 单位dip
         val DOCK_RADIUS = DefaultValue().radius
@@ -103,6 +104,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
                 lpparam.classLoader
         ) ?: return
         try {
+            replaceMethodResult(SEARCH_BAR_STYLE_DATA_CLASSNAME, lpparam.classLoader, "isUserBlur", true)
             XposedHelpers.findAndHookMethod(
                     _LAUNCHER_CLASS,
                     "onCreate",
@@ -231,38 +233,22 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
     }
 
     private fun deviceLevelHook(lpparam: XC_LoadPackage.LoadPackageParam) {
-        val _BLUR_UTILS_CLASS = XposedHelpers.findClassIfExists(
-                BLUR_UTILS_CLASSNAME,
-                lpparam.classLoader
-        ) ?: return
-        val _DEVICELEVEL_UTILS_CLASS = XposedHelpers.findClassIfExists(
-                DEVICELEVEL_UTILS_CLASSNAME,
-                lpparam.classLoader
-        ) ?: return
-        val _CPULEVEL_UTILS_CLASS = XposedHelpers.findClassIfExists(
-                CPULEVEL_UTILS_CLASSNAME,
-                lpparam.classLoader
-        ) ?: return
-        val _UTILITIES_CLASS = XposedHelpers.findClassIfExists(
-                UTILITIES_CLASSNAME,
-                lpparam.classLoader
-        ) ?: return
         // 高斯模糊类型
-        replaceMethodResult(_BLUR_UTILS_CLASS, "getBlurType", 2)
+        replaceMethodResult(BLUR_UTILS_CLASSNAME, lpparam.classLoader, "getBlurType", 2)
         // 打开文件夹是否开启模糊
-        replaceMethodResult(_BLUR_UTILS_CLASS, "isUserBlurWhenOpenFolder", true)
+        replaceMethodResult(BLUR_UTILS_CLASSNAME, lpparam.classLoader, "isUserBlurWhenOpenFolder", true)
         // 设备等级
-        replaceMethodResult(_DEVICELEVEL_UTILS_CLASS, "getDeviceLevel", 2)
-        replaceMethodResult(_DEVICELEVEL_UTILS_CLASS, "getDeviceLevel", 2, Int::class.java)
-        replaceMethodResult(_DEVICELEVEL_UTILS_CLASS, "getDeviceLevel", 2, Int::class.java, Int::class.java)
-        replaceMethodResult(_DEVICELEVEL_UTILS_CLASS, "getDeviceLevel1", 2, Int::class.java)
-        replaceMethodResult(_DEVICELEVEL_UTILS_CLASS, "isUseSimpleAnim", false)
-        replaceMethodResult(_DEVICELEVEL_UTILS_CLASS, "getQualcommCpuLevel", 2, String::class.java)
-        replaceMethodResult(_CPULEVEL_UTILS_CLASS, "getQualcommCpuLevel", 2, String::class.java)
+        replaceMethodResult(DEVICELEVEL_UTILS_CLASSNAME, lpparam.classLoader, "getDeviceLevel", 2)
+        replaceMethodResult(DEVICELEVEL_UTILS_CLASSNAME, lpparam.classLoader, "getDeviceLevel", 2, Int::class.java)
+        replaceMethodResult(DEVICELEVEL_UTILS_CLASSNAME, lpparam.classLoader, "getDeviceLevel", 2, Int::class.java, Int::class.java)
+        replaceMethodResult(DEVICELEVEL_UTILS_CLASSNAME, lpparam.classLoader, "getDeviceLevel1", 2, Int::class.java)
+        replaceMethodResult(DEVICELEVEL_UTILS_CLASSNAME, lpparam.classLoader, "isUseSimpleAnim", false)
+        replaceMethodResult(DEVICELEVEL_UTILS_CLASSNAME, lpparam.classLoader, "getQualcommCpuLevel", 2, String::class.java)
+        replaceMethodResult(CPULEVEL_UTILS_CLASSNAME, lpparam.classLoader, "getQualcommCpuLevel", 2, String::class.java)
         // 下载特效
-        replaceMethodResult(_CPULEVEL_UTILS_CLASS, "needMamlDownload", true)
+        replaceMethodResult(CPULEVEL_UTILS_CLASSNAME, lpparam.classLoader, "needMamlDownload", true)
         // 平滑动画
-        replaceMethodResult(_UTILITIES_CLASS, "isUseSmoothAnimationEffect", true)
+        replaceMethodResult(UTILITIES_CLASSNAME, lpparam.classLoader, "isUseSmoothAnimationEffect", true)
     }
 
     private fun resetDockRadius(res: XResources, context: Context, drawableName: String) {
@@ -294,9 +280,9 @@ class MainHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
         }
     }
 
-    private fun replaceMethodResult(clazz: Class<*>, methodName: String, result: Any, vararg args: Any?) {
+    private fun replaceMethodResult(className: String, classLoader: ClassLoader, methodName: String, result: Any, vararg args: Any?) {
         try {
-            XposedHelpers.findAndHookMethod(clazz, methodName, *args, XC_MethodReplacement.returnConstant(result))
+            XposedHelpers.findAndHookMethod(className, classLoader, methodName, *args, XC_MethodReplacement.returnConstant(result))
         } catch (e: Throwable) {
             XposedBridge.log("[MIUIDock] Replace Method Result Error:" + e.message)
         }
